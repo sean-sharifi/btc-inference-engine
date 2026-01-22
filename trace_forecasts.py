@@ -37,5 +37,14 @@ def inspect_db():
     else:
         print("Table 'forecasts' DOES NOT EXIST.")
 
+    if 'features_options_surface' in tables:
+        count = conn.execute("SELECT COUNT(*) FROM features_options_surface").fetchone()[0]
+        print(f"Row count for 'features_options_surface': {count}")
+        if count > 0:
+            latest = conn.execute("SELECT MAX(timestamp) FROM features_options_surface").fetchone()[0]
+            print(f"Latest features timestamp: {latest}")
+    else:
+        print("Table 'features_options_surface' DOES NOT EXIST.")
+
 if __name__ == "__main__":
     inspect_db()

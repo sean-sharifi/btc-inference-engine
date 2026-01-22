@@ -396,7 +396,11 @@ def train_and_forecast(
             
             db_client.insert_dataframe("forecasts", df_forecasts, if_exists="append")
             
+            db_client.insert_dataframe("forecasts", df_forecasts, if_exists="append")
+            
             logger.info(f"Saved {len(forecasts)} forecasts to database")
+        else:
+            logger.warning(f"No forecasts generated for timestamp {latest_ts}. Check if features exist for this timestamp.")
     
     return {
         'model_version': model_version,
