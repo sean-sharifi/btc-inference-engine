@@ -128,12 +128,25 @@ class SwitchingKalmanFilter:
             df[['supply_elasticity', 'forced_flow_index', 'liquidity_impulse']] = \
                 df[['supply_elasticity', 'forced_flow_index', 'liquidity_impulse']].fillna(method='ffill')
         
-        # Drop rows with too many NaNs
-        df = df.dropna(thresh=len(df.columns) * 0.5)
+        # Ensure all expected columns exist (for fixed dimension)
+        expected_columns = [
+            'level', 'skew', 'curvature', 'term_structure', 
+            'pca_factor_1', 'pca_factor_2',
+            'stabilization_index', 'acceleration_index',
+            'supply_elasticity', 'forced_flow_index', 'liquidity_impulse',
+            'divergence_score'
+        ]
         
-        # Extract observations (fill remaining NaNs with 0)
-        obs_columns = [c for c in df.columns if c != 'timestamp']
-        observations = df[obs_columns].fillna(0).values
+        for col in expected_columns:
+            if col not in df.columns:
+                logger.warning(f"Feature {col} missing, filling with 0.0")
+                df[col] = 0.0
+                
+        # Drop rows with too many NaNs
+        df = df.dropna(thresh=5)  # At least 5 features present
+        
+        # Extract observations in specific order
+        observations = df[expected_columns].fillna(0).values
         
         logger.info(f"Loaded {len(observations)} observations with {observations.shape[1]} features")
         
