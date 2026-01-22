@@ -62,9 +62,10 @@ SCHEMA_DEFINITIONS = {
     
     "raw_glassnode_metrics": """
         CREATE TABLE IF NOT EXISTS raw_glassnode_metrics (
-            timestamp TIMESTAMP,
-            metric_name VARCHAR,
-            value DECIMAL(28, 8),
+            timestamp TIMESTAMP NOT NULL,
+            metric_name VARCHAR NOT NULL,
+            value DOUBLE,
+            symbol VARCHAR,
             resolution VARCHAR,
             PRIMARY KEY (timestamp, metric_name)
         )
