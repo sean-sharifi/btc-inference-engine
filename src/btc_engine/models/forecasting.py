@@ -74,6 +74,7 @@ class DistributionalForecaster:
         """
         
         df_price = db_client.query_to_dataframe(price_query, (since, until))
+        logger.info(f"Fetched {len(df_price)} price records")
         
         if len(df_price) == 0:
             logger.warning("No price data found, using synthetic returns")
@@ -81,13 +82,17 @@ class DistributionalForecaster:
         else:
             # Merge price data
             df = df.merge(df_price, on='timestamp', how='left')
+            logger.info(f"Merged state and price data: {len(df)} rows")
+            
             df['btc_price'] = df['btc_price'].fillna(method='ffill')
             
             # Calculate returns
             df['returns'] = df['btc_price'].pct_change()
         
         # Drop NaNs
+        before_drop = len(df)
         df = df.dropna()
+        logger.info(f"Dropped NaNs: {before_drop} -> {len(df)} rows")
         
         logger.info(f"Loaded {len(df)} observations for training")
         
@@ -107,6 +112,8 @@ class DistributionalForecaster:
         Returns:
             Tuple of (X_features, y_targets)
         """
+        logger.info(f"Creating features for horizon {horizon_periods}")
+        
         # Features: current state + regime probs + lagged returns
         feature_cols = [
             'regime_1_prob', 'regime_2_prob', 'regime_3_prob',
@@ -123,7 +130,9 @@ class DistributionalForecaster:
         df[f'target_{horizon_periods}'] = df['returns'].rolling(horizon_periods).sum().shift(-horizon_periods)
         
         # Drop NaNs
+        before_drop = len(df)
         df_clean = df.dropna()
+        logger.info(f"Feature extraction dropna: {before_drop} -> {len(df_clean)} rows")
         
         X = df_clean[feature_cols].values
         y = df_clean[f'target_{horizon_periods}'].values
