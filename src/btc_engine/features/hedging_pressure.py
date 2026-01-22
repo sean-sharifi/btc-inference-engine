@@ -25,7 +25,7 @@ class HedgingPressureCalculator:
         self.aggregation_method = self.config["aggregation_method"]
         self.min_oi_threshold = self.config["min_oi_threshold"]
     
-    def fet ch_ticker_with_greeks(self, timestamp: datetime) -> pd.DataFrame:
+    def fetch_ticker_with_greeks(self, timestamp: datetime) -> pd.DataFrame:
         """Fetch ticker data with Greeks"""
         query = """
             SELECT 
