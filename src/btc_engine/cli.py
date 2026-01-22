@@ -7,6 +7,7 @@ from rich.console import Console
 from rich.table import Table
 
 from btc_engine.database.migrations import initialize_database, reset_database
+from btc_engine.database.client import db_client
 from btc_engine.database.schema import get_table_info
 from btc_engine.ingestion import run_deribit_ingestion, run_glassnode_ingestion
 from btc_engine.features import (
