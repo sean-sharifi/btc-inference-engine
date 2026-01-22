@@ -71,8 +71,9 @@ dev = [
 btc-engine = "btc_engine.cli:app"
 
 [build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+requires = ["setuptools>=45", "wheel", "setuptools-scm>=6.2"]
+build-backend = "setuptools.build_meta"
+
 
 [tool.uv]
 dev-dependencies = [
@@ -98,10 +99,8 @@ warn_return_any = true
 warn_unused_configs = true
 disallow_untyped_defs = false
 
-[tool.hatch.build.targets.wheel]
-packages = ["src/btc_engine"]
-
 [tool.pytest.ini_options]
+
 testpaths = ["tests"]
 python_files = ["test_*.py"]
 python_classes = ["Test*"]
