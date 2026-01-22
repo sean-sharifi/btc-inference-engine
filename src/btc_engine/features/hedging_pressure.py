@@ -21,7 +21,7 @@ class HedgingPressureCalculator:
         
         self.spot_grid_points = self.config["spot_grid_points"]
         self.spot_range_pct = self.config["spot_range_pct"]
-        self.gamma_scaling = self.config["gamma_scaling"]
+        self.gamma_scaling = float(self.config["gamma_scaling"])
         self.aggregation_method = self.config["aggregation_method"]
         self.min_oi_threshold = self.config["min_oi_threshold"]
     
