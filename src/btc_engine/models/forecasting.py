@@ -44,9 +44,11 @@ class DistributionalForecaster:
             DataFrame with features and returns
         """
         if since is None:
-            since = datetime.now() - timedelta(days=180)
+            since = datetime.now() - timedelta(days=365)
         if until is None:
             until = datetime.now()
+            
+        logger.info(f"Fetching training data from {since} to {until}")
         
         # Fetch state estimates (with regime probs)
         state_query = """
