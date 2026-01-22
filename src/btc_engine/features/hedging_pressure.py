@@ -235,10 +235,12 @@ def calculate_and_store_hedging_pressure(timestamp: Optional[datetime] = None) -
     calculator = HedgingPressureCalculator()
     metrics = calculator.calculate_hedging_pressure(timestamp)
     
-    # Store aggregate metrics
-    df = pd.DataFrame([metrics])
-    db_client.insert_dataframe("features_hedging_pressure", df, if_exists="append")
-    
-    logger.info("Stored hedging pressure metrics")
+    # Only store if we have valid data
+    if metrics.get('timestamp') is not None:
+        df = pd.DataFrame([metrics])
+        db_client.insert_dataframe("features_hedging_pressure", df, if_exists="append")
+        logger.info("Stored hedging pressure metrics")
+    else:
+        logger.warning("No hedging pressure metrics to store (no options data)")
     
     return metrics
