@@ -248,6 +248,12 @@ class OptionsSurfaceFactorizer:
         
         surface_flat = surface_flat.reshape(1, -1)
         
+        # Check if we have enough features for PCA
+        n_features = surface_flat.shape[1]
+        if n_features < self.n_pca_components:
+            logger.warning(f"Insufficient features ({n_features}) for PCA with {self.n_pca_components} components. Returning zeros.")
+            return {f'pca_factor_{i+1}': 0.0 for i in range(self.n_pca_components)}
+        
         if fit or self.pca_model is None:
             # Fit new PCA model
             if self.pca_standardize:
