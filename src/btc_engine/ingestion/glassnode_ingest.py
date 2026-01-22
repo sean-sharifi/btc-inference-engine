@@ -59,8 +59,9 @@ class GlassnodeIngestor:
             logger.warning("No new data fetched from Glassnode")
             return 0
         
-        # Add resolution column
+        # Add resolution and symbol columns
         df['resolution'] = self.connector.resolution
+        df['symbol'] = 'BTC'  # All Glassnode data is for BTC
         
         # Reorder columns to match table schema: timestamp, metric_name, value, symbol, resolution
         df = df[['timestamp', 'metric_name', 'value', 'symbol', 'resolution']]
