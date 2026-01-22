@@ -30,11 +30,11 @@ state_space:
 forecasting:
   horizons:
     - name: 24h
-      periods: 24
-      frequency: H
+      periods: 1  # 1 day for 24h (since data is daily)
+      frequency: D
     - name: 7d
-      periods: 168
-      frequency: H
+      periods: 7  # 7 days for 7d (since data is daily)
+      frequency: D
       
   quantiles: [0.05, 0.25, 0.5, 0.75, 0.95]
   
