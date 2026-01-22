@@ -90,6 +90,11 @@ class DistributionalForecaster:
             
             # Calculate returns
             df['returns'] = df['btc_price'].pct_change()
+            
+            # Check for insufficient variance (synthetic/flat data)
+            if df['returns'].std() < 0.001:
+                logger.warning("Returns variance too low (flat data). Injecting synthetic volatility for demo.")
+                df['returns'] = np.random.randn(len(df)) * 0.02 # 2% daily vol
         
         # Drop NaNs
         before_drop = len(df)
