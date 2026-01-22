@@ -300,6 +300,7 @@ class DistributionalForecaster:
             SELECT timestamp, AVG(underlying_price) as btc_price
             FROM raw_deribit_ticker_snapshots
             WHERE timestamp <= ?
+            GROUP BY timestamp
             ORDER BY timestamp DESC
             LIMIT 20
         """
