@@ -394,10 +394,28 @@ def train_and_forecast(
     forecaster.fit(since, until)
     
     # Generate forecasts for latest timestamp
+    # Generate forecasts for latest timestamp
+    latest_db_ts = db_client.get_latest_timestamp("model_states")
+    
     if until is None:
-        latest_ts = db_client.get_latest_timestamp("model_states")
+        latest_ts = latest_db_ts
     else:
-        latest_ts = until
+        # Check if 'until' exists in DB
+        check_query = f"SELECT 1 FROM model_states WHERE timestamp = '{until}'"
+        result = db_client.execute(check_query)
+        if hasattr(result, 'fetchone'):
+            exists = result.fetchone()
+        else:
+            exists = False # Handle case where execute returns differently based on client impl
+            
+        if exists:
+            latest_ts = until
+        else:
+            if latest_db_ts:
+                logger.warning(f"Target timestamp {until} not found in DB. Falling back to latest available: {latest_db_ts}")
+                latest_ts = latest_db_ts
+            else:
+                latest_ts = until # Nothing in DB anyway
     
     if latest_ts:
         forecasts = forecaster.generate_forecasts(latest_ts, model_version)
