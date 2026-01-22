@@ -401,14 +401,10 @@ def train_and_forecast(
         latest_ts = latest_db_ts
     else:
         # Check if 'until' exists in DB
-        check_query = f"SELECT 1 FROM model_states WHERE timestamp = '{until}'"
-        result = db_client.execute(check_query)
-        if hasattr(result, 'fetchone'):
-            exists = result.fetchone()
-        else:
-            exists = False # Handle case where execute returns differently based on client impl
+        check_query = "SELECT 1 FROM model_states WHERE timestamp = ?"
+        result = db_client.execute_query(check_query, params=(until,), read_only=True)
             
-        if exists:
+        if len(result) > 0:
             latest_ts = until
         else:
             if latest_db_ts:
@@ -427,7 +423,12 @@ def train_and_forecast(
             # Clear existing forecasts for this timestamp to avoid PK conflicts/stale data
             try:
                 delete_query = f"DELETE FROM forecasts WHERE forecast_timestamp = '{latest_ts}'"
-                db_client.execute(delete_query)
+                # Use raw connection for write operations if execute_query doesn't support writes properly without read_only=False
+                # client.py's execute_query supports read_only=True/False. 
+                # Wait, execute_query uses fetchall(), which might not be ideal for DELETE but works. 
+                # Better to use a raw connection for meaningful side effects if execute_query implies "query".
+                # But execute_query(read_only=False) is fine.
+                db_client.execute_query(delete_query, read_only=False)
             except Exception as e:
                 logger.warning(f"Failed to clear old forecasts (might not exist): {e}")
             
