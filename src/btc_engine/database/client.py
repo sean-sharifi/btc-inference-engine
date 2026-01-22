@@ -82,7 +82,8 @@ class DatabaseClient:
             if if_exists == "replace":
                 conn.execute(f"DROP TABLE IF EXISTS {table_name}")
             
-            conn.execute(f"INSERT INTO {table_name} SELECT * FROM df")
+            # Use INSERT OR REPLACE to handle duplicate primary keys gracefully
+            conn.execute(f"INSERT OR REPLACE INTO {table_name} SELECT * FROM df")
             conn.commit()
             
         logger.debug(f"Inserted {len(df)} rows into {table_name}")
