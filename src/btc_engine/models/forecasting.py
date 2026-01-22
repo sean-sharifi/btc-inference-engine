@@ -195,17 +195,25 @@ class DistributionalForecaster:
         
         # Train models for each horizon
         for horizon_name, horizon_periods in self.horizons.items():
+            print(f">>> Processing horizon: {horizon_name}")
             logger.info(f"Training models for horizon: {horizon_name} ({horizon_periods} periods)")
             
             # Create features and targets
             X, y = self.create_features(df.copy(), horizon_periods)
+            print(f">>> Features created. X shape: {X.shape}, y shape: {y.shape}")
             
-            if len(X) < 50:
+            if len(X) < self.config.get("min_train_samples", 50):
+                print(f">>> SKIPPING: Insufficient data ({len(X)} samples < {self.config.get('min_train_samples', 50)})")
                 logger.warning(f"Insufficient data for {horizon_name} ({len(X)} samples), skipping")
                 continue
             
             # Train quantile models
+            print(f">>> Training quantile models for {horizon_name}...")
             self.train_quantile_models(X, y, horizon_name)
+            print(f">>> Models trained for {horizon_name}")
+        
+        self.is_fitted = True
+        logger.info("All forecasting models fitted")
         
         self.is_fitted = True
         logger.info("All forecasting models fitted")
