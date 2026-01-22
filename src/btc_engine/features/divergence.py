@@ -119,19 +119,19 @@ class DivergenceDetector:
         components = []
         
         # Left tail mass (downside fear)
-        if 'options_left_tail_mass' in options_signals:
+        if 'options_left_tail_mass' in options_signals and not np.isnan(options_signals['options_left_tail_mass']):
             components.append(options_signals['options_left_tail_mass'] * 2.0)
         
         # Negative skew (downside demand)
-        if 'options_skew' in options_signals:
+        if 'options_skew' in options_signals and not np.isnan(options_signals['options_skew']):
             components.append(abs(min(0, options_signals['options_skew'])))
         
         # Jump risk
-        if 'options_jump_risk' in options_signals:
+        if 'options_jump_risk' in options_signals and not np.isnan(options_signals['options_jump_risk']):
             components.append(options_signals['options_jump_risk'])
         
         # Curvature (smile intensity)
-        if 'options_curvature' in options_signals:
+        if 'options_curvature' in options_signals and not np.isnan(options_signals['options_curvature']):
             components.append(abs(options_signals['options_curvature']))
         
         return np.mean(components) if components else 0.0
@@ -148,15 +148,15 @@ class DivergenceDetector:
         components = []
         
         # Forced flow (positive → selling pressure)
-        if 'onchain_forced_flow_z' in onchain_signals:
+        if 'onchain_forced_flow_z' in onchain_signals and not np.isnan(onchain_signals['onchain_forced_flow_z']):
             components.append(max(0, onchain_signals['onchain_forced_flow_z']))
         
         # Low elasticity (harder to absorb selling)
-        if 'onchain_elasticity_z' in onchain_signals:
+        if 'onchain_elasticity_z' in onchain_signals and not np.isnan(onchain_signals['onchain_elasticity_z']):
             components.append(-min(0, onchain_signals['onchain_elasticity_z']))
         
         # Negative liquidity impulse (liquidity draining)
-        if 'onchain_liquidity_z' in onchain_signals:
+        if 'onchain_liquidity_z' in onchain_signals and not np.isnan(onchain_signals['onchain_liquidity_z']):
             components.append(-min(0, onchain_signals['onchain_liquidity_z']))
         
         return np.mean(components) if components else 0.0
