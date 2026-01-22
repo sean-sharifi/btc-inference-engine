@@ -254,7 +254,12 @@ class OptionsSurfaceFactorizer:
             logger.warning(f"Insufficient features ({n_features}) for PCA with {self.n_pca_components} components. Returning zeros.")
             return {f'pca_factor_{i+1}': 0.0 for i in range(self.n_pca_components)}
         
-            # Fit new PCA model
+        # Force fit if model doesn't exist
+        if self.pca_model is None:
+            fit = True
+
+        if fit:
+             # Fit new PCA model
             if self.pca_standardize:
                 self.scaler = StandardScaler()
                 surface_std = self.scaler.fit_transform(surface_flat)
@@ -262,8 +267,8 @@ class OptionsSurfaceFactorizer:
                 surface_std = surface_flat
 
             if surface_std.shape[0] < self.n_pca_components:
-                 # If we are trying to fit on a single sample (e.g. cold start), we can't do PCA
-                 logger.warning(f"Insufficient samples ({surface_std.shape[0]}) for PCA fit with {self.n_pca_components} components. Returning zeros.")
+                 # If we are trying to fit on a single sample, we can't do meaningful PCA (components > samples).
+                 # We return zeros to robustly handle the "single snapshot" cold start case.
                  return {f'pca_factor_{i+1}': 0.0 for i in range(self.n_pca_components)}
 
             self.pca_model = PCA(n_components=self.n_pca_components)
