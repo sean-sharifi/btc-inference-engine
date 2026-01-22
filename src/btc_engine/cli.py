@@ -197,7 +197,6 @@ def build_features(
         
         console.print("  Detecting divergence...")
         if ts is None:
-            from btc_engine.database.client import db_client
             latest_ts = db_client.get_latest_timestamp("features_options_surface")
             if latest_ts:
                 ts = latest_ts
@@ -369,8 +368,6 @@ def status():
     )
     
     # Data freshness
-    from btc_engine.database.client import db_client
-    
     latest_deribit = db_client.get_latest_timestamp("raw_deribit_ticker_snapshots")
     latest_glassnode = db_client.get_latest_timestamp("raw_glassnode_metrics")
     
