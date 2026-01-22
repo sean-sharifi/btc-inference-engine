@@ -1,9 +1,11 @@
-"""Configuration constants for the BTC engine"""
+"""Project-wide constants and paths"""
 
 from pathlib import Path
 
-# Directories
-PROJECT_ROOT = Path(__file__).parent.parent.parent
+# Project root (go up 3 levels from this file: utils -> btc_engine -> src -> root)
+PROJECT_ROOT = Path(__file__).parent.parent.parent.parent.resolve()
+
+# Configuration
 CONFIG_DIR = PROJECT_ROOT / "configs"
 DATA_DIR = PROJECT_ROOT / "data"
 ARTIFACTS_DIR = PROJECT_ROOT / "artifacts"
