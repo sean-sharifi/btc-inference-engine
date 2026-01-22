@@ -51,7 +51,7 @@ forecasting:
     train_window_days: 90
     test_window_days: 7
     step_days: 1
-    min_train_samples: 500
+    min_train_samples: 50
     
   model_params:
     lightgbm:
