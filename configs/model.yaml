@@ -1,0 +1,86 @@
+state_space:
+  type: switching_kalman
+  n_regimes: 3
+  regime_names:
+    - risk_on
+    - compression
+    - distress
+  
+  state_dim: 6  # latent state dimensions
+  state_names:
+    - risk_appetite
+    - leverage_stress
+    - dealer_stabilization
+    - tail_demand_asymmetry
+    - inventory_imbalance
+    - liquidity_regime
+  
+  observation_dim: 15
+  
+  transition:
+    noise_scale: 0.1
+    momentum: 0.8
+    
+  emission:
+    noise_scale: 0.2
+    
+  training:
+    max_iterations: 100
+    convergence_tol: 1e-4
+    initialization: kmeans
+    regularization: 1e-5
+
+forecasting:
+  horizons:
+    - name: 24h
+      periods: 24
+      frequency: H
+    - name: 7d
+      periods: 168
+      frequency: H
+      
+  quantiles: [0.05, 0.25, 0.5, 0.75, 0.95]
+  
+  method: regime_quantile_regression
+  engine: lightgbm
+  
+  tail_metrics:
+    - expected_shortfall_5pct
+    - left_tail_mass_2std
+    - right_tail_mass_2std
+    - vol_of_vol
+    
+  walk_forward:
+    train_window_days: 90
+    test_window_days: 7
+    step_days: 1
+    min_train_samples: 500
+    
+  model_params:
+    lightgbm:
+      n_estimators: 200
+      max_depth: 5
+      learning_rate: 0.05
+      num_leaves: 31
+      min_child_samples: 20
+
+evaluation:
+  metrics:
+    - crps
+    - pinball_loss
+    - hit_rate_5pct
+    - hit_rate_95pct
+    - regime_stability
+    - mae
+    - rmse
+    
+  calibration:
+    n_bins: 10
+    
+  feature_stability:
+    psi_threshold: 0.2
+    drift_check_window: 30
+    
+  backtest:
+    min_history_days: 180
+    evaluation_frequency_days: 7

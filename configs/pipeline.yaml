@@ -1,0 +1,26 @@
+scheduling:
+  ingest_deribit_cron: "*/15 * * * *"  # every 15 min
+  ingest_glassnode_cron: "0 */1 * * *"  # hourly
+  build_features_cron: "10 */1 * * *"
+  train_model_cron: "0 0 * * 0"  # weekly Sunday
+  forecast_cron: "30 */4 * * *"  # every 4 hours
+
+incremental:
+  checkpoint_table: pipeline_checkpoints
+  lookback_hours: 48  # for incremental feature building
+  enable_checkpointing: true
+
+parallelism:
+  max_workers: 4
+  use_multiprocessing: false  # use threading for I/O bound tasks
+
+storage:
+  parquet_compression: snappy
+  parquet_row_group_size: 100000
+  enable_partitioning: true
+  partition_by: date
+
+caching:
+  enable_cache: true
+  cache_dir: ./.cache
+  max_cache_size_mb: 1000

@@ -1,0 +1,59 @@
+options_surface:
+  moneyness_range: [-0.5, 0.5]  # log-moneyness
+  moneyness_grid_points: 50
+  expiry_range_days: [1, 90]
+  smoothing:
+    method: rbf  # radial basis function
+    epsilon: 0.1
+  pca:
+    n_components: 5
+    standardize: true
+
+risk_neutral:
+  density_method: breeden_litzenberger
+  strike_spacing: 0.01  # for numerical differentiation
+  tail_threshold: 0.1   # for tail mass calculation
+  min_strikes_per_expiry: 5
+
+hedging_pressure:
+  spot_grid_points: 100
+  spot_range_pct: [-30, 30]  # % around current spot
+  gamma_scaling: 1e-6
+  aggregation_method: oi_weighted
+  min_oi_threshold: 10  # minimum OI to include
+
+onchain_indices:
+  lookback_days: 90
+  smoothing_window: 7
+  zscore_window: 30
+  min_data_points: 30
+  
+  elasticity:
+    weights:
+      lth_supply: 0.4
+      exchange_reserve: 0.3
+      dormancy: 0.3
+    normalization: zscore
+    
+  forced_flow:
+    weights:
+      exchange_inflow_spike: 0.35
+      young_coin_movement: 0.25
+      miner_outflow: 0.20
+      netflow_acceleration: 0.20
+    spike_threshold: 2.0  # std deviations
+    
+  liquidity_impulse:
+    weights:
+      stablecoin_supply_change: 0.5
+      stablecoin_exchange_inflow: 0.5
+    smoothing_alpha: 0.3
+
+divergence:
+  threshold_scores:
+    hedge_demand: 1.5
+    underpriced_crash: -1.5
+    breakout_risk: 2.0
+  explainability:
+    top_n_signals: 5
+  lookback_correlation_days: 30

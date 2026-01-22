@@ -1,0 +1,52 @@
+deribit:
+  base_url: https://www.deribit.com/api/v2
+  rate_limit:
+    requests_per_second: 10
+    burst: 20
+  instruments:
+    currency: BTC
+    kind: option
+  cache_ttl_seconds: 300
+  retry:
+    max_attempts: 3
+    backoff_factor: 2
+
+glassnode:
+  base_url: https://api.glassnode.com/v1
+  rate_limit:
+    requests_per_second: 1
+    burst: 3
+  endpoints:
+    # Exchange flows
+    exchange_flows_inflow: /metrics/transactions/transfers_volume_to_exchanges_sum
+    exchange_flows_outflow: /metrics/transactions/transfers_volume_from_exchanges_sum
+    exchange_netflow: /metrics/transactions/transfers_volume_exchanges_net
+    
+    # Exchange reserves
+    exchange_reserve: /metrics/distribution/balance_exchanges
+    
+    # Supply cohorts
+    supply_lth: /metrics/supply/lth_sum
+    supply_sth: /metrics/supply/sth_sum
+    supply_active_1y: /metrics/supply/active_1y
+    supply_illiquid: /metrics/supply/illiquid_sum
+    
+    # Dormancy and age
+    dormancy: /metrics/indicators/dormancy
+    cdd: /metrics/indicators/cdd
+    soab: /metrics/indicators/soab
+    spent_output_age_bands: /metrics/indicators/soab_adjusted
+    
+    # Stablecoins
+    stablecoin_supply_ratio: /metrics/indicators/stablecoin_supply_ratio
+    stablecoin_exchange_netflow: /metrics/transactions/transfers_volume_stablecoins_exchanges_net
+    
+    # Additional useful metrics
+    nupl: /metrics/indicators/net_unrealized_profit_loss
+    mvrv: /metrics/market/mvrv
+    
+  cache_ttl_seconds: 3600
+  retry:
+    max_attempts: 5
+    backoff_factor: 3
+  resolution: 24h  # daily data
