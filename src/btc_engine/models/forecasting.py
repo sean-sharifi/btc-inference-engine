@@ -386,6 +386,14 @@ def train_and_forecast(
         if len(forecasts) > 0:
             # Save to database
             df_forecasts = pd.DataFrame(forecasts)
+            
+            # Clear existing forecasts for this timestamp to avoid PK conflicts/stale data
+            try:
+                delete_query = f"DELETE FROM forecasts WHERE forecast_timestamp = '{latest_ts}'"
+                db_client.execute(delete_query)
+            except Exception as e:
+                logger.warning(f"Failed to clear old forecasts (might not exist): {e}")
+            
             db_client.insert_dataframe("forecasts", df_forecasts, if_exists="append")
             
             logger.info(f"Saved {len(forecasts)} forecasts to database")
