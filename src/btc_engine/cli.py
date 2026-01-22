@@ -81,6 +81,42 @@ def ingest_glassnode(
 
 
 @app.command()
+def backfill_history(
+    days: int = typer.Option(180, help="Number of days to backfill")
+):
+    """Generate synthetic historical data for immediate model training"""
+    from btc_engine.ingestion.backfill import backfill_deribit_history, backfill_glassnode_history
+    
+    console.print(f"[bold]Backfilling {days} days of historical data...[/bold]")
+    console.print("[dim]This generates synthetic but realistic data using current snapshots as templates[/dim]")
+    
+    try:
+        # Backfill Deribit options data
+        console.print("  Generating historical options data...")
+        deribit_result = backfill_deribit_history(days=days)
+        
+        console.print(f"[green]✓ Deribit backfill complete:[/green]")
+        console.print(f"  Days: {deribit_result['days_backfilled']}")
+        console.print(f"  Instruments: {deribit_result['instruments_created']:,}")
+        console.print(f"  Tickers: {deribit_result['tickers_created']:,}")
+        console.print(f"  Vol range: {deribit_result['vol_range'][0]:.1%} - {deribit_result['vol_range'][1]:.1%}")
+        
+        # Ensure Glassnode coverage
+        console.print("  Ensuring onchain data coverage...")
+        glassnode_result = backfill_glassnode_history(days=days)
+        
+        console.print(f"[green]✓ Glassnode coverage: {glassnode_result['status']}[/green]")
+        
+        console.print("\n[bold green]✓ Historical backfill complete![/bold green]")
+        console.print("[dim]You can now run: btc-engine build-features && btc-engine train-model[/dim]")
+        
+    except Exception as e:
+        console.print(f"[red]✗ Backfill failed: {e}[/red]")
+        logger.exception("Backfill error")
+        raise typer.Exit(1)
+
+
+@app.command()
 def build_features(
     timestamp: Optional[str] = typer.Option(None, help="Timestamp (YYYY-MM-DD HH:MM:SS) or 'latest'")
 ):
