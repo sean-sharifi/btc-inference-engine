@@ -314,7 +314,7 @@ def newsletter(
 @app.command()
 def dashboard(
     port: int = typer.Option(8501, help="Dashboard port"),
-    host: str = typer.Option("localhost", help="Dashboard host")
+    host: str = typer.Option("0.0.0.0", help="Dashboard host")
 ):
     """Launch Streamlit dashboard"""
     import subprocess
