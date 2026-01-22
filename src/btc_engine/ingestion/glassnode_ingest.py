@@ -62,6 +62,9 @@ class GlassnodeIngestor:
         # Add resolution column
         df['resolution'] = self.connector.resolution
         
+        # Reorder columns to match table schema: timestamp, metric_name, value, symbol, resolution
+        df = df[['timestamp', 'metric_name', 'value', 'symbol', 'resolution']]
+        
         # Insert into database
         db_client.insert_dataframe("raw_glassnode_metrics", df, if_exists="append")
         
