@@ -15,7 +15,7 @@ state_space:
     - inventory_imbalance
     - liquidity_regime
   
-  observation_dim: 15
+  observation_dim: 10  # Actual: 6 surface + 2 hedge + 3 onchain (hedging sometimes zero)
   
   transition:
     noise_scale: 0.1
