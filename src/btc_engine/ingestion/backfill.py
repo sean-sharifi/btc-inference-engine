@@ -180,6 +180,8 @@ def backfill_glassnode_history(days: int = 180) -> dict:
     
     # Re-ingest with sufficient history
     logger.info(f"Re-ingesting Glassnode with {days} days")
-    result = run_glassnode_ingestion(days=days, incremental=False)
+    until = int(datetime.now().timestamp())
+    since = int((datetime.now() - timedelta(days=days)).timestamp())
+    result = run_glassnode_ingestion(since=since, until=until, incremental=False)
     
-    return {'status': 'backfilled', 'records': result.get('records_inserted', 0)}
+    return {'status': 'backfilled', 'records': result.get('records', 0)}
