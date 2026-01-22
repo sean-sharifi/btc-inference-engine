@@ -1,6 +1,6 @@
 """Options surface factorization and PCA analysis"""
 
-from typing import Dict, Optional, Tuple
+from typing import Optional, Dict, List, Tuple
 from datetime import datetime
 import numpy as np
 import pandas as pd

@@ -1,6 +1,6 @@
 """Options ↔ Onchain divergence detection and scoring"""
 
-from typing import Dict, List, Tuple, Optional
+from typing import Optional, Dict, List, Tuple
 from datetime import datetime, timedelta
 import numpy as np
 import pandas as pd

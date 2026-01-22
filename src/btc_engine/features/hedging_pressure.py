@@ -1,6 +1,6 @@
 """Hedging pressure field calculation (gamma/vanna/charm aggregation)"""
 
-from typing import Dict, Optional, Tuple
+from typing import Dict, Optional, List, Tuple
 from datetime import datetime
 import numpy as np
 import pandas as pd

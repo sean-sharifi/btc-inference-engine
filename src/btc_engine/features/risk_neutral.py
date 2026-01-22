@@ -1,6 +1,6 @@
 """Risk-neutral distribution proxies and tail measures"""
 
-from typing import Dict, Optional
+from typing import Dict, Optional, Tuple
 from datetime import datetime
 import numpy as np
 import pandas as pd
