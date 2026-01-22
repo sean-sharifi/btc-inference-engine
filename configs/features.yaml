@@ -18,7 +18,7 @@ risk_neutral:
 hedging_pressure:
   spot_grid_points: 100
   spot_range_pct: [-30, 30]  # % around current spot
-  gamma_scaling: 1e-6
+  gamma_scaling: 1e-8
   aggregation_method: oi_weighted
   min_oi_threshold: 10  # minimum OI to include
 

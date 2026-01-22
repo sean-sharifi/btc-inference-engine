@@ -164,6 +164,12 @@ class HedgingPressureCalculator:
         # Gamma skew (asymmetry)
         gamma_skew = np.mean(gamma_exposure[spot_idx:]) - np.mean(gamma_exposure[:spot_idx])
         
+        # Clip values to DECIMAL(10,6) range (-9999.999999 to 9999.999999)
+        limit = 9999.0
+        stabilization_index = max(min(stabilization_index, limit), -limit)
+        acceleration_index = max(min(acceleration_index, limit), -limit)
+        gamma_skew = max(min(gamma_skew, limit), -limit)
+        
         return {
             'stabilization_index': stabilization_index,
             'acceleration_index': acceleration_index,
