@@ -95,7 +95,7 @@ def build_features(
     try:
         # Options features
         console.print("  Calculating options surface factors...")
-calculate_and_store_surface_factors(ts)
+        calculate_and_store_surface_factors(ts)
         
         console.print("  Calculating risk-neutral metrics...")
         calculate_and_store_risk_neutral(ts)
@@ -130,6 +130,7 @@ calculate_and_store_surface_factors(ts)
         console.print(f"[red]✗ Feature building failed: {e}[/red]")
         logger.error(f"Feature building error: {e}", exc_info=True)
         raise typer.Exit(code=1)
+
 
 
 @app.command()
