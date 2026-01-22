@@ -90,7 +90,7 @@ def backfill_deribit_history(days: int = 180) -> dict:
     
     # Get current snapshot as template
     current_instruments = db_client.query_to_dataframe(
-        "SELECT * FROM raw_deribit_instruments ORDER BY created_at DESC LIMIT 1000"
+        "SELECT * FROM raw_deribit_instruments ORDER BY timestamp DESC LIMIT 1000"
     )
     current_tickers = db_client.query_to_dataframe(
         "SELECT * FROM raw_deribit_ticker_snapshots ORDER BY timestamp DESC LIMIT 1000"
@@ -115,9 +115,13 @@ def backfill_deribit_history(days: int = 180) -> dict:
         
         # Scale instruments
         hist_instruments = current_instruments.copy()
-        hist_instruments['created_at'] = timestamp
-        if 'updated_at' in hist_instruments.columns:
-            hist_instruments['updated_at'] = timestamp
+        hist_instruments['timestamp'] = timestamp
+        if 'creation_timestamp' in hist_instruments.columns:
+            hist_instruments['creation_timestamp'] = timestamp
+        if 'expiration_timestamp' in hist_instruments.columns:
+            # Keep expiration dates relative to the historical timestamp
+            exp_diff = hist_instruments['expiration_timestamp'] - current_instruments['timestamp'].iloc[0]
+            hist_instruments['expiration_timestamp'] = timestamp + exp_diff
         
         # Scale tickers
         hist_tickers = scale_snapshot_by_vol(current_tickers.copy(), vol_ratio)
