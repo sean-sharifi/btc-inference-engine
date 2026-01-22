@@ -118,9 +118,53 @@ def backfill_history(
 
 @app.command()
 def build_features(
-    timestamp: Optional[str] = typer.Option(None, help="Timestamp (YYYY-MM-DD HH:MM:SS) or 'latest'")
+    timestamp: Optional[str] = typer.Option(None, help="Timestamp (YYYY-MM-DD HH:MM:SS) or 'latest'"),
+    all: bool = typer.Option(False, "--all", help="Build features for all historical timestamps")
 ):
-    """Build all features for a timestamp"""
+    """Build all features for a timestamp or all historical data"""
+    
+    if all:
+        # Build features for all historical timestamps
+        console.print("[bold]Building features for all historical data...[/bold]")
+        
+        # Get all unique timestamps from raw data
+        timestamps_query = """
+            SELECT DISTINCT timestamp 
+            FROM raw_deribit_ticker_snapshots 
+            ORDER BY timestamp
+        """
+        timestamps_df = db_client.query_to_dataframe(timestamps_query)
+        
+        if timestamps_df.empty:
+            console.print("[yellow]No historical data found[/yellow]")
+            return
+        
+        total = len(timestamps_df)
+        console.print(f"[dim]Processing {total} timestamps...[/dim]")
+        
+        for idx, row in timestamps_df.iterrows():
+            ts = row['timestamp']
+            
+            try:
+                # Build features for this timestamp
+                calculate_and_store_surface_factors(ts)
+                calculate_and_store_risk_neutral(ts)
+                calculate_and_store_hedging_pressure(ts)
+                calculate_and_store_onchain_indices(ts, ts)
+                calculate_and_store_divergence(ts)
+                
+                # Progress indicator every 10 timestamps
+                if (idx + 1) % 10 == 0 or (idx + 1) == total:
+                    console.print(f"[dim]  Progress: {idx + 1}/{total} ({100*(idx+1)/total:.1f}%)[/dim]")
+                    
+            except Exception as e:
+                logger.warning(f"Failed to build features for {ts}: {e}")
+                continue
+        
+        console.print(f"[green]✓ Feature building complete: {total} timestamps processed[/green]")
+        return
+    
+    # Single timestamp mode (original behavior)
     if timestamp is None or timestamp == "latest":
         ts = None
         console.print("[bold]Building features for latest data...[/bold]")
