@@ -1,65 +1,63 @@
-# Python
+# Ignore Python cache
 __pycache__/
 *.py[cod]
 *$py.class
-*.so
-.Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
 
 # Virtual environments
+.venv/
 venv/
 ENV/
 env/
-.venv
 
 # IDE
 .vscode/
 .idea/
 *.swp
 *.swo
-*~
+
+# Data and outputs (gitignored but keep structure)
+data/*.duckdb
+data/*.db
+outputs/newsletters/*
+outputs/charts/*
+!outputs/.gitkeep
+!data/.gitkeep
+
+# Artifacts
+artifacts/models/*
+artifacts/metadata/*
+!artifacts/.gitkeep
+
+# Logs
+logs/*.log
+*.log
+!logs/.gitkeep
 
 # Environment
 .env
 .env.local
 
-# Data and outputs
-data/
-outputs/
-logs/
-*.duckdb
-*.parquet
-*.db
+# Testing
+.coverage
+htmlcov/
+.pytest_cache/
+.tox/
 
-# Artifacts (keep structure but not contents)
-artifacts/*
-!artifacts/.gitkeep
+# Distribution
+dist/
+build/
+*.egg-info/
 
 # Jupyter
 .ipynb_checkpoints/
 *.ipynb
 
-# Testing
-.coverage
-.pytest_cache/
-htmlcov/
-
-# MacOS
+# OS
 .DS_Store
+Thumbs.db
 
-# Prefect
-.prefect/
+# Temporary
+*.tmp
+*.bak
+*.swp
+cli_additions.py

@@ -1,0 +1,36 @@
+{
+    "name": "BTC Options + Onchain Engine",
+    "image": "mcr.microsoft.com/devcontainers/python:3.11",
+    "features": {
+        "ghcr.io/devcontainers/features/python:1": {
+            "version": "3.11"
+        }
+    },
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-python.python",
+                "ms-python.vscode-pylance",
+                "ms-toolsai.jupyter"
+            ],
+            "settings": {
+                "python.defaultInterpreterPath": "/usr/local/bin/python",
+                "python.linting.enabled": true,
+                "python.linting.pylintEnabled": false,
+                "python.linting.flake8Enabled": true,
+                "python.formatting.provider": "black"
+            }
+        }
+    },
+    "postCreateCommand": "pip install --upgrade pip && pip install -e .",
+    "forwardPorts": [
+        8501
+    ],
+    "portsAttributes": {
+        "8501": {
+            "label": "Dashboard",
+            "onAutoForward": "notify"
+        }
+    },
+    "remoteUser": "vscode"
+}
